@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+    <title>语料三色阁 · 语言素材库</title>
+    <!-- Font Awesome 6 图标库 (免费) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f4f7fb;
+            color: #1e293b;
+            line-height: 1.5;
+            padding: 1.5rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        /* 头部 */
+        .header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            background: linear-gradient(145deg, #2c3e50, #1e3c5f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .header h1 i {
+            background: none;
+            -webkit-text-fill-color: #3b82f6;
+            font-size: 2.2rem;
+        }
+
+        .subhead {
+            color: #5f6c80;
+            font-size: 1rem;
+            border-bottom: 1px solid #d9e2ef;
+            padding-bottom: 1rem;
+            margin-top: 0.2rem;
+        }
+
+        /* 卡片通用设计 */
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0,20,50,0.04);
+            padding: 1.5rem 1.2rem;
+            transition: all 0.2s;
+            border: 1px solid #ffffff50;
+            backdrop-filter: blur(2px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.08);
+            transform: translateY(-3px);
+            border-color: #bdd3ff;
+        }
+
+        /* 添加区域卡片 */
+        .add-panel {
+            background: #ffffffd9;
+            backdrop-filter: blur(4px);
+            border: 1px solid #eef4ff;
+            margin-bottom: 2rem;
+        }
+
+        .textarea-field {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+            border: 1px solid #dde7f0;
+            border-radius: 20px;
+            resize: vertical;
+            min-height: 90px;
+            background: #fafcff;
+            transition: 0.15s;
+            font-family: inherit;
+        }
+
+        .textarea-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px #3b82f620;
+            background: white;
+        }
+
+        /* 标签选择按钮组 */
+        .tag-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1rem 0 1.2rem;
+        }
+
+        .tag-btn {
+            border: none;
+            background: #f1f5f9;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 550;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: 0.15s;
+            border: 1px solid transparent;
+            color: #1e2b3c;
+        }
+
+        .tag-btn i {
+            font-size: 0.9rem;
+        }
+
+        .tag-btn.blue-tag {
+            background: #e8f0fe;
+            color: #1e4a8b;
+        }
+        .tag-btn.blue-tag.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 5px 10px #3b82f650;
+        }
+
+        .tag-btn.green-tag {
+            background: #e2f7e7;
+            color: #0b6b4a;
+        }
+        .tag-btn.green-tag.active {
+            background: #10b981;
+            color: white;
+            border-color: #059669;
+            box-shadow: 0 5px 10px #10b98160;
+        }
+
+        .tag-btn.red-tag {
+            background: #fee9e7;
+            color: #aa302a;
+        }
+        .tag-btn.red-tag.active {
+            background: #ef4444;
+            color: white;
+            border-color: #dc2626;
+            box-shadow: 0 5px 10px #ef444670;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .primary-btn {
+            background: #2d3c53;
+            color: white;
+            border: none;
+            padding: 0.7rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #253445;
+        }
+
+        .primary-btn i {
+            font-size: 1rem;
+        }
+
+        .primary-btn:hover {
+            background: #1f2b3b;
+            transform: scale(1.02);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            border: 1px solid #b9c8de;
+            color: #3f5372;
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .secondary-btn:hover {
+            background: #edf2f9;
+            border-color: #8ba0bc;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 过滤栏 */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            gap: 1.2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 60px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.02);
+            border: 1px solid #e2eaf5;
+        }
+
+        .filter-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .filter-tab {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1.3rem;
+            border-radius: 40px;
+            font-weight: 550;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.1s;
+            color: #4e627c;
+            border: 1px solid transparent;
+        }
+
+        .filter-tab.active {
+            background: #1e2f41;
+            color: white;
+            border-color: #0b1a2b;
+        }
+
+        .filter-tab.blue-filter.active { background: #3b82f6; }
+        .filter-tab.green-filter.active { background: #10b981; }
+        .filter-tab.red-filter.active { background: #ef4444; }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: #f1f6fc;
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+            border: 1px solid #d3e0ee;
+            min-width: 250px;
+        }
+
+        .search-box i {
+            color: #8196b0;
+            margin-right: 8px;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            padding: 0.5rem 0;
+            width: 100%;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .stats {
+            font-size: 0.9rem;
+            color: #5f6f86;
+            background: #ecf2fa;
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            white-space: nowrap;
+        }
+
+        /* 卡片网格 */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        /* 单个卡片 */
+        .vocab-card {
+            background: white;
+            border-radius: 26px;
+            padding: 1.3rem 1.3rem 1rem 1.3rem;
+            box-shadow: 0 6px 14px rgba(0,20,40,0.04);
+            transition: 0.15s;
+            border-left: 8px solid;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #eef3fb;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .category-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.35rem 1.1rem;
+            border-radius: 30px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .badge-blue { background: #3b82f6; }
+        .badge-green { background: #10b981; }
+        .badge-red { background: #ef4444; }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.1rem;
+            color: #7d8fa9;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.1s;
+        }
+
+        .icon-btn:hover {
+            background: #eaf0f8;
+            color: #2b3f59;
+        }
+
+        .icon-btn.delete-btn:hover {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .card-content {
+            font-size: 1.1rem;
+            line-height: 1.55;
+            word-break: break-word;
+            padding: 0.5rem 0 0.8rem 0;
+            color: #17212b;
+            flex: 1;
+        }
+
+        .empty-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3.5rem;
+            background: #f8fbfe;
+            border-radius: 60px;
+            color: #6f7f98;
+            font-size: 1.2rem;
+            border: 1px dashed #b9cde0;
+        }
+
+        /* toast 通知 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            background: #1e2a3ad9;
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: 0.2s;
+            pointer-events: none;
+            z-index: 999;
+            border: 1px solid #ffffff30;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+            pointer-events: none;
+        }
+
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .filter-bar {
+                border-radius: 30px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-box {
+                width: 100%;
+            }
+            .stats {
+                text-align: center;
+            }
+            .header h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <!-- 页眉 -->
+    <div class="header">
+        <h1><i class="fas fa-pen-fancy"></i> 语料三色阁</h1>
+        <div class="subhead">蓝·金句 · 绿·精准词 · 红·反常识观点</div>
+    </div>
+
+    <!-- 添加 / 编辑卡片区域 -->
+    <div class="card add-panel">
+        <textarea id="textInput" class="textarea-field" placeholder="输入素材文本… 例：勇气不是没有恐惧，而是战胜恐惧。"></textarea>
+
+        <!-- 三色标签选择器 -->
+        <div class="tag-selector" id="tagSelector">
+            <button class="tag-btn blue-tag active" data-category="blue"><i class="fas fa-tag"></i> 蓝标·金句</button>
+            <button class="tag-btn green-tag" data-category="green"><i class="fas fa-leaf"></i> 绿标·精准词</button>
+            <button class="tag-btn red-tag" data-category="red"><i class="fas fa-lightbulb"></i> 红标·反常识</button>
+        </div>
+
+        <!-- 提交与取消 -->
+        <div class="action-buttons">
+            <button class="primary-btn" id="submitBtn"><i class="fas fa-plus-circle"></i> <span id="submitBtnText">添加素材</span></button>
+            <button class="secondary-btn hidden" id="cancelBtn"><i class="fas fa-times"></i> 取消编辑</button>
+        </div>
+    </div>
+
+    <!-- 筛选栏 -->
+    <div class="filter-bar">
+        <div class="filter-tabs" id="filterTabs">
+            <button class="filter-tab active" data-filter="all">全部</button>
+            <button class="filter-tab blue-filter" data-filter="blue"><i class="fas fa-circle" style="color: #3b82f6;"></i> 蓝标</button>
+            <button class="filter-tab green-filter" data-filter="green"><i class="fas fa-circle" style="color: #10b981;"></i> 绿标</button>
+            <button class="filter-tab red-filter" data-filter="red"><i class="fas fa-circle" style="color: #ef4444;"></i> 红标</button>
+        </div>
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="搜索素材内容..." autocomplete="off">
+        </div>
+        <div class="stats" id="statsDisplay">📊 0 条素材</div>
+    </div>
+
+    <!-- 卡片网格容器 -->
+    <div id="cardsContainer" class="cards-grid"></div>
+
+    <!-- 右下toast -->
+    <div id="toast" class="toast">文案已复制</div>
+</div>
+
+<script>
+    (function() {
+        // ----- 核心数据 & 变量 -----
+        let materialData = [];                     // 素材数组 { id, text, category }
+        let currentFilter = 'all';                  // all / blue / green / red
+        let searchTerm = '';                         
+        let editingId = null;                        // 正在编辑的素材id，null表示添加模式
+
+        // DOM 元素
+        const textInput = document.getElementById('textInput');
+        const tagSelector = document.getElementById('tagSelector');
+        const tagBtns = tagSelector.querySelectorAll('.tag-btn');
+        const submitBtn = document.getElementById('submitBtn');
+        const submitBtnText = document.getElementById('submitBtnText');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const filterTabs = document.getElementById('filterTabs');
+        const filterBtns = filterTabs.querySelectorAll('.filter-tab');
+        const searchInput = document.getElementById('searchInput');
+        const statsDisplay = document.getElementById('statsDisplay');
+        const cardsContainer = document.getElementById('cardsContainer');
+        const toast = document.getElementById('toast');
+
+        // 分类映射（显示用）
+        const categoryInfo = {
+            blue: { label: '金句', badgeClass: 'badge-blue', icon: 'fa-solid fa-star' },
+            green: { label: '精准词', badgeClass: 'badge-green', icon: 'fa-solid fa-feather' },
+            red: { label: '反常识', badgeClass: 'badge-red', icon: 'fa-solid fa-brain' }
+        };
+
+        // ----- 初始化示例数据 (如果本地存储为空) -----
+        function loadInitialData() {
+            const stored = localStorage.getItem('vocab_materials');
+            if (stored) {
+                try {
+                    materialData = JSON.parse(stored);
+                } catch { materialData = []; }
+            }
+            if (!materialData || materialData.length === 0) {
+                // 填充示例素材（ID使用时间戳+偏移确保唯一）
+                const now = Date.now();
+                materialData = [
+                    { id: now + 1, text: '勇气不是没有恐惧，而是战胜恐惧。', category: 'blue' },
+                    { id: now + 2, text: '蜿蜒 · 氤氲 · 静谧 · 踉跄', category: 'green' },
+                    { id: now + 3, text: '失败是成功的垫脚石，但成功也可能是失败的陷阱。', category: 'red' },
+                    { id: now + 4, text: '最长的路有时是抵达内心的捷径。', category: 'blue' },
+                    { id: now + 5, text: '凛冽 斟酌 徘徊 绽放', category: 'green' },
+                    { id: now + 6, text: '效率最高的方法，往往反直觉。', category: 'red' }
+                ];
+            }
+        }
+
+        // 保存至localStorage
+        function saveToStorage() {
+            localStorage.setItem('vocab_materials', JSON.stringify(materialData));
+        }
+
+        // ----- 工具函数：显示toast -----
+        function showToast(msg = '已复制', duration = 1800) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // ----- 获取当前选中分类 (从标签选择器 active) -----
+        function getSelectedCategory() {
+            const active = tagSelector.querySelector('.tag-btn.active');
+            return active ? active.dataset.category : 'blue'; // 保底蓝
+        }
+
+        // 设置分类按钮active (用于填充编辑)
+        function setActiveCategory(category) {
+            tagBtns.forEach(btn => {
+                const cat = btn.dataset.category;
+                if (cat === category) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // 重置表单到添加模式
+        function resetForm() {
+            textInput.value = '';
+            setActiveCategory('blue');          // 默认蓝标
+            editingId = null;
+            submitBtnText.innerText = '添加素材';
+            submitBtn.innerHTML = '<i class="fas fa-plus-circle"></i> <span>添加素材</span>';
+            cancelBtn.classList.add('hidden');
+        }
+
+        // 填充表单用于编辑 (由编辑按钮触发)
+        function fillEditForm(id) {
+            const item = materialData.find(m => m.id === id);
+            if (!item) return;
+            textInput.value = item.text;
+            setActiveCategory(item.category);
+            editingId = item.id;
+            submitBtnText.innerText = '更新素材';
+            submitBtn.innerHTML = '<i class="fas fa-pen-to-square"></i> <span>更新素材</span>';
+            cancelBtn.classList.remove('hidden');
+            // 滚动到表单区域
+            textInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            textInput.focus();
+        }
+
+        // ----- 核心渲染函数：根据filter和searchTerm渲染卡片 -----
+        function renderCards() {
+            // 过滤逻辑
+            let filtered = materialData.filter(item => {
+                // 分类过滤
+                if (currentFilter !== 'all' && item.category !== currentFilter) return false;
+                // 搜索过滤 (内容包含，大小写不敏感)
+                if (searchTerm.trim() !== '' && !item.text.toLowerCase().includes(searchTerm.trim().toLowerCase())) return false;
+                return true;
+            });
+
+            // 更新统计显示
+            const total = materialData.length;
+            const blueCount = materialData.filter(m => m.category === 'blue').length;
+            const greenCount = materialData.filter(m => m.category === 'green').length;
+            const redCount = materialData.filter(m => m.category === 'red').length;
+            statsDisplay.innerHTML = `📊 共 ${total}  (蓝 ${blueCount} · 绿 ${greenCount} · 红 ${redCount})`;
+
+            if (filtered.length === 0) {
+                cardsContainer.innerHTML = `<div class="empty-message"><i class="fa-regular fa-face-smile"></i> 没有匹配的素材，试试添加一条吧 ✨</div>`;
+                return;
+            }
+
+            // 构建卡片 HTML (使用数据属性 data-id 供事件代理)
+            let htmlStr = '';
+            filtered.forEach(item => {
+                const cat = item.category;
+                const badgeClass = categoryInfo[cat].badgeClass;
+                const catLabel = categoryInfo[cat].label;
+                // 为了操作方便，卡片包裹一个容器，并在每个操作按钮上携带 data-id 和 data-action
+                htmlStr += `
+                    <div class="vocab-card" data-id="${item.id}">
+                        <div class="card-header">
+                            <span class="category-badge ${badgeClass}"><i class="fas ${cat === 'blue' ? 'fa-star' : (cat === 'green' ? 'fa-feather' : 'fa-brain')}"></i> ${catLabel}</span>
+                            <div class="card-actions">
+                                <span class="icon-btn copy-btn" data-id="${item.id}" data-action="copy" title="复制文本"><i class="far fa-copy"></i></span>
+                                <span class="icon-btn edit-btn" data-id="${item.id}" data-action="edit" title="编辑"><i class="far fa-pen-to-square"></i></span>
+                                <span class="icon-btn delete-btn" data-id="${item.id}" data-action="delete" title="删除"><i class="far fa-trash-can"></i></span>
+                            </div>
+                        </div>
+                        <div class="card-content">${escapeHtml(item.text)}</div>
+                    </div>
+                `;
+            });
+            cardsContainer.innerHTML = htmlStr;
+        }
+
+        // 简单的转义（防止XSS，但内容基本安全，增加习惯）
+        function escapeHtml(unsafe) {
+            return unsafe.replace(/[&<>"]/g, function(m) {
+                if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; if(m === '"') return '&quot;';
+                return m;
+            });
+        }
+
+        // ----- 事件代理：卡片内的复制、编辑、删除 -----
+        cardsContainer.addEventListener('click', (e) => {
+            const actionBtn = e.target.closest('[data-action]');
+            if (!actionBtn) return;
+            const action = actionBtn.dataset.action;
+            const idStr = actionBtn.dataset.id;
+            if (!idStr) return;
+            const id = Number(idStr);
+
+            if (action === 'copy') {
+                const item = materialData.find(m => m.id === id);
+                if (item) {
+                    navigator.clipboard.writeText(item.text).then(() => {
+                        showToast('✅ 素材已复制');
+                    }).catch(() => {
+                        alert('复制失败，请手动复制');
+                    });
+                }
+                e.preventDefault();
+            }
+            else if (action === 'edit') {
+                fillEditForm(id);
+                e.preventDefault();
+            }
+            else if (action === 'delete') {
+                if (confirm('确定要删除这条素材吗？')) {
+                    materialData = materialData.filter(m => m.id !== id);
+                    saveToStorage();
+                    // 如果删除的正好是正在编辑的条目，则重置表单
+                    if (editingId === id) {
+                        resetForm();
+                    }
+                    renderCards();
+                }
+                e.preventDefault();
+            }
+        });
+
+        // ----- 提交按钮 (添加/更新) -----
+        submitBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const text = textInput.value.trim();
+            if (!text) {
+                alert('素材内容不能为空');
+                return;
+            }
+            const category = getSelectedCategory();
+
+            if (editingId !== null) {
+                // 更新模式
+                const index = materialData.findIndex(m => m.id === editingId);
+                if (index !== -1) {
+                    materialData[index] = { ...materialData[index], text: text, category: category };
+                } else {
+                    // id不存在（异常）转为新增
+                    materialData.push({ id: Date.now(), text, category });
+                }
+            } else {
+                // 新增模式
+                const newId = Date.now() + Math.floor(Math.random() * 100);
+                materialData.push({ id: newId, text, category });
+            }
+
+            saveToStorage();
+            resetForm();
+            renderCards();
+        });
+
+        // 取消编辑
+        cancelBtn.addEventListener('click', () => {
+            resetForm();
+        });
+
+        // ----- 标签选择器切换 (三色按钮 active) -----
+        tagBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tagBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // ----- 过滤器切换 -----
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter; // 'all' / 'blue' / ...
+                renderCards();
+            });
+        });
+
+        // ----- 搜索框实时过滤 -----
+        searchInput.addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            renderCards();
+        });
+
+        // ----- 辅助: 点击空白处重置过滤器高亮? 不用, 已经完美。额外功能：添加示例按钮? 可以加一个隐藏按钮, 但为了体验, 提供一个快速追加示例的方法（按需）。我们增加一个隐形重置：双击标题重置为默认示例（附加确认，提高可用性）
+        // 这里提供一个小彩蛋: 双击标题重置为默认示例 (谨慎, 先确认)
+        const headerH1 = document.querySelector('.header h1');
+        headerH1.addEventListener('dblclick', () => {
+            if (confirm('重置为内置示例素材？当前所有未保存数据将会丢失。')) {
+                const now = Date.now();
+                materialData = [
+                    { id: now + 1, text: '勇气不是没有恐惧，而是战胜恐惧。', category: 'blue' },
+                    { id: now + 2, text: '蜿蜒 · 氤氲 · 静谧 · 踉跄', category: 'green' },
+                    { id: now + 3, text: '失败是成功的垫脚石，但成功也可能是失败的陷阱。', category: 'red' },
+                    { id: now + 4, text: '最长的路有时是抵达内心的捷径。', category: 'blue' },
+                    { id: now + 5, text: '凛冽 斟酌 徘徊 绽放', category: 'green' },
+                    { id: now + 6, text: '效率最高的方法，往往反直觉。', category: 'red' }
+                ];
+                saveToStorage();
+                resetForm();          // 同时退出编辑模式
+                renderCards();
+                showToast('✨ 已加载内置示例', 1500);
+            }
+        });
+
+        // 启动时加载数据 + 渲染
+        loadInitialData();
+        saveToStorage();              // 确保初始存储
+        renderCards();
+
+        // 防意外：如果localStorage中没有保存，刚刚loadInitialData已填充示例，再保存
+        // 但要注意loadInitialData中如果有存储则直接使用，已经存在，不需要二次保存。但为了统一，在最后检查并保存（其实已经在load里存了，无妨）
+        // 编辑中刷新页面重置状态正常。
+        window.addEventListener('beforeunload', function() {
+            // 无需操作，已经自动保存每次变动
+        });
+
+        // 额外：点击取消时如果没有任何编辑，隐藏也不影响。已经实现。
+        // 默认取消隐藏
+        resetForm();
+    })();
+</script>
+</body>
+</html>
