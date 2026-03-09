@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
     <title>语料三色阁 · 语言素材库</title>
-    <!-- Font Awesome 6 图标库 (免费) -->
+    <!-- Font Awesome 6 图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -230,7 +230,7 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 2rem;
-            gap: 1.2rem;
+            gap: 1rem;
             background: white;
             padding: 1rem 1.5rem;
             border-radius: 60px;
@@ -274,7 +274,8 @@
             border-radius: 40px;
             padding: 0.3rem 1rem;
             border: 1px solid #d3e0ee;
-            min-width: 250px;
+            min-width: 220px;
+            flex: 1 1 auto;
         }
 
         .search-box i {
@@ -298,6 +299,38 @@
             padding: 0.3rem 1.2rem;
             border-radius: 30px;
             white-space: nowrap;
+        }
+
+        /* 备份工具按钮组 */
+        .backup-tools {
+            display: flex;
+            gap: 0.4rem;
+            margin-left: auto; /* 靠右对齐 */
+        }
+        .backup-tools .icon-btn {
+            background: #f0f5fd;
+            border: none;
+            font-size: 1.2rem;
+            color: #436185;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.15s;
+            border: 1px solid transparent;
+        }
+        .backup-tools .icon-btn:hover {
+            background: #e1e9f3;
+            color: #1f3a5f;
+            border-color: #a1bbd8;
+            transform: scale(1.05);
+        }
+        .backup-tools .icon-btn:active {
+            background: #cad8ea;
         }
 
         /* 卡片网格 */
@@ -420,11 +453,15 @@
         }
 
         /* 响应式 */
-        @media (max-width: 600px) {
+        @media (max-width: 700px) {
             .filter-bar {
                 border-radius: 30px;
                 flex-direction: column;
                 align-items: stretch;
+            }
+            .backup-tools {
+                margin-left: 0;
+                justify-content: flex-end;
             }
             .search-box {
                 width: 100%;
@@ -441,7 +478,7 @@
     <!-- 页眉 -->
     <div class="header">
         <h1><i class="fas fa-pen-fancy"></i> 语料三色阁</h1>
-        <div class="subhead">蓝·金句 · 绿·精准词 · 红·反常识观点</div>
+        <div class="subhead">蓝·金句 · 绿·精准词 · 红·反常识观点  ✦ 可导入/导出</div>
     </div>
 
     <!-- 添加 / 编辑卡片区域 -->
@@ -462,7 +499,7 @@
         </div>
     </div>
 
-    <!-- 筛选栏 -->
+    <!-- 筛选栏 + 导入导出按钮 -->
     <div class="filter-bar">
         <div class="filter-tabs" id="filterTabs">
             <button class="filter-tab active" data-filter="all">全部</button>
@@ -475,13 +512,21 @@
             <input type="text" id="searchInput" placeholder="搜索素材内容..." autocomplete="off">
         </div>
         <div class="stats" id="statsDisplay">📊 0 条素材</div>
+        <!-- 新增的导入导出按钮组 -->
+        <div class="backup-tools">
+            <button class="icon-btn" id="exportBtn" title="导出数据为JSON文件"><i class="fas fa-download"></i></button>
+            <button class="icon-btn" id="importBtn" title="从JSON文件导入（将替换现有数据）"><i class="fas fa-upload"></i></button>
+        </div>
     </div>
+
+    <!-- 隐藏的文件输入，用于导入 -->
+    <input type="file" id="importFile" accept=".json,application/json" style="display: none;">
 
     <!-- 卡片网格容器 -->
     <div id="cardsContainer" class="cards-grid"></div>
 
-    <!-- 右下toast -->
-    <div id="toast" class="toast">文案已复制</div>
+    <!-- toast通知 -->
+    <div id="toast" class="toast">操作成功</div>
 </div>
 
 <script>
@@ -505,6 +550,11 @@
         const statsDisplay = document.getElementById('statsDisplay');
         const cardsContainer = document.getElementById('cardsContainer');
         const toast = document.getElementById('toast');
+
+        // 新增：导入导出相关元素
+        const exportBtn = document.getElementById('exportBtn');
+        const importBtn = document.getElementById('importBtn');
+        const importFile = document.getElementById('importFile');
 
         // 分类映射（显示用）
         const categoryInfo = {
@@ -541,7 +591,7 @@
         }
 
         // ----- 工具函数：显示toast -----
-        function showToast(msg = '已复制', duration = 1800) {
+        function showToast(msg = '操作成功', duration = 1800) {
             toast.textContent = msg;
             toast.classList.add('show');
             setTimeout(() => {
@@ -621,7 +671,6 @@
                 const cat = item.category;
                 const badgeClass = categoryInfo[cat].badgeClass;
                 const catLabel = categoryInfo[cat].label;
-                // 为了操作方便，卡片包裹一个容器，并在每个操作按钮上携带 data-id 和 data-action
                 htmlStr += `
                     <div class="vocab-card" data-id="${item.id}">
                         <div class="card-header">
@@ -639,7 +688,7 @@
             cardsContainer.innerHTML = htmlStr;
         }
 
-        // 简单的转义（防止XSS，但内容基本安全，增加习惯）
+        // 简单的转义（防止XSS）
         function escapeHtml(unsafe) {
             return unsafe.replace(/[&<>"]/g, function(m) {
                 if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; if(m === '"') return '&quot;';
@@ -744,8 +793,62 @@
             renderCards();
         });
 
-        // ----- 辅助: 点击空白处重置过滤器高亮? 不用, 已经完美。额外功能：添加示例按钮? 可以加一个隐藏按钮, 但为了体验, 提供一个快速追加示例的方法（按需）。我们增加一个隐形重置：双击标题重置为默认示例（附加确认，提高可用性）
-        // 这里提供一个小彩蛋: 双击标题重置为默认示例 (谨慎, 先确认)
+        // ========== 新增：导出数据 ==========
+        function exportData() {
+            const dataStr = JSON.stringify(materialData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            // 文件名包含日期
+            const dateStr = new Date().toISOString().slice(0,10);
+            a.download = `语料三色阁_备份_${dateStr}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('📁 导出成功');
+        }
+
+        exportBtn.addEventListener('click', exportData);
+
+        // ========== 新增：导入数据 ==========
+        importBtn.addEventListener('click', () => {
+            importFile.click();  // 触发隐藏文件选择
+        });
+
+        importFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const imported = JSON.parse(event.target.result);
+                    // 简单校验：必须是数组且每个对象包含必要的字段
+                    if (Array.isArray(imported) && imported.every(item => 
+                        typeof item === 'object' && item !== null && 
+                        'id' in item && 'text' in item && 'category' in item
+                    )) {
+                        if (confirm('导入将替换当前所有素材，确定吗？')) {
+                            materialData = imported;
+                            saveToStorage();
+                            resetForm();          // 退出编辑模式
+                            renderCards();
+                            showToast('📂 导入成功');
+                        }
+                    } else {
+                        alert('文件格式不正确：需要包含 id, text, category 的数组');
+                    }
+                } catch (err) {
+                    alert('解析失败：不是有效的 JSON 文件');
+                } finally {
+                    // 清空 input，以便再次选择同一个文件
+                    importFile.value = '';
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // ----- 辅助：双击标题重置为默认示例 (彩蛋) -----
         const headerH1 = document.querySelector('.header h1');
         headerH1.addEventListener('dblclick', () => {
             if (confirm('重置为内置示例素材？当前所有未保存数据将会丢失。')) {
@@ -759,27 +862,17 @@
                     { id: now + 6, text: '效率最高的方法，往往反直觉。', category: 'red' }
                 ];
                 saveToStorage();
-                resetForm();          // 同时退出编辑模式
+                resetForm();
                 renderCards();
                 showToast('✨ 已加载内置示例', 1500);
             }
         });
 
-        // 启动时加载数据 + 渲染
+        // 启动
         loadInitialData();
         saveToStorage();              // 确保初始存储
         renderCards();
-
-        // 防意外：如果localStorage中没有保存，刚刚loadInitialData已填充示例，再保存
-        // 但要注意loadInitialData中如果有存储则直接使用，已经存在，不需要二次保存。但为了统一，在最后检查并保存（其实已经在load里存了，无妨）
-        // 编辑中刷新页面重置状态正常。
-        window.addEventListener('beforeunload', function() {
-            // 无需操作，已经自动保存每次变动
-        });
-
-        // 额外：点击取消时如果没有任何编辑，隐藏也不影响。已经实现。
-        // 默认取消隐藏
-        resetForm();
+        resetForm();                  // 确保表单状态
     })();
 </script>
 </body>
